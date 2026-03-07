@@ -106,7 +106,7 @@ Analyze the task description to identify ALL required domains. Map keywords to s
 
 For EACH identified domain:
 
-1. **Read the skill file** from `${CLAUDE_PLUGIN_ROOT}/skills/`
+1. **Read the skill file** from `skills/`
 2. **Extract version-specific patterns** for the detected version
 3. **Note breaking changes** and deprecations for this version
 4. **Include copy-paste ready code snippets**

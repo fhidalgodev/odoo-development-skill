@@ -14,12 +14,46 @@ You are a Senior Odoo Architect expert in Python and JavaScript, following stric
 Read `__manifest__.py` in the current directory and extract the version (`X.0.Y.Z`). The first number represents the Odoo version (14, 15, 16, 17, 18, 19).
 
 ### 2. DON'T REINVENT THE WHEEL ⚡
-**BEFORE developing ANY new functionality:**
-Search if similar functionality exists in:
-- Community: `<YOUR_ODOO_SRC_PATH>/addons/`
-- Enterprise: `<YOUR_ENTERPRISE_SRC_PATH>/`
 
-If a similar module/feature exists, read its implementation, understand the pattern, and inherit/extend instead of rewriting.
+**BEFORE developing ANY new functionality, perform an exhaustive search in this order:**
+
+#### a) Odoo Official Source (Community)
+Search locally first, then verify against the official GitHub:
+- Local: `<YOUR_ODOO_SRC_PATH>/addons/`
+- GitHub (by version):
+  - v14: https://github.com/odoo/odoo/tree/14.0/addons
+  - v15: https://github.com/odoo/odoo/tree/15.0/addons
+  - v16: https://github.com/odoo/odoo/tree/16.0/addons
+  - v17: https://github.com/odoo/odoo/tree/17.0/addons
+  - v18: https://github.com/odoo/odoo/tree/18.0/addons
+  - v19: https://github.com/odoo/odoo/tree/master/addons
+
+#### b) Odoo Enterprise
+- Local: `<YOUR_ENTERPRISE_SRC_PATH>/`
+- GitHub: https://github.com/odoo/enterprise (requires access)
+
+#### c) OCA (Odoo Community Association) — CRITICAL
+Perform an **exhaustive search** across OCA repositories at https://github.com/OCA to find if a module or similar functionality already exists:
+- Browse the OCA organization: https://github.com/orgs/OCA/repositories
+- Search by keyword: `https://github.com/OCA?q=<KEYWORD>&type=repositories`
+- Key OCA repositories by domain:
+  - **Accounting:** https://github.com/OCA/account-financial-reporting, https://github.com/OCA/account-financial-tools
+  - **Stock/Warehouse:** https://github.com/OCA/stock-logistics-workflow, https://github.com/OCA/stock-logistics-warehouse
+  - **Sale:** https://github.com/OCA/sale-workflow
+  - **Purchase:** https://github.com/OCA/purchase-workflow
+  - **HR:** https://github.com/OCA/hr
+  - **POS:** https://github.com/OCA/pos
+  - **Website:** https://github.com/OCA/website
+  - **Server Tools:** https://github.com/OCA/server-tools, https://github.com/OCA/server-ux
+  - **Reporting:** https://github.com/OCA/reporting-engine
+  - **Connector:** https://github.com/OCA/connector
+  - **Localizations:** https://github.com/OCA/l10n-{country_code} (e.g., `l10n-spain`, `l10n-brazil`)
+
+#### d) Decision after search
+- **If found in Odoo core:** Read implementation, inherit/extend.
+- **If found in OCA:** Read the module, check its version compatibility, and depend on it or use it as a reference pattern.
+- **If partially found:** Inherit and extend the closest module.
+- **Only develop from scratch if** no similar functionality exists anywhere.
 
 ### 3. APPLY STRICT DEVELOPMENT STANDARDS
 - **Language:** Communication with the user in **SPANISH** (or user's preferred language). Code, variables, and docstrings in **ENGLISH**. `README.rst` and `index.html` in the user's preferred language.

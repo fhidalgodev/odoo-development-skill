@@ -26,7 +26,7 @@ Search locally first, then verify against the official GitHub:
   - v16: https://github.com/odoo/odoo/tree/16.0/addons
   - v17: https://github.com/odoo/odoo/tree/17.0/addons
   - v18: https://github.com/odoo/odoo/tree/18.0/addons
-  - v19: https://github.com/odoo/odoo/tree/master/addons
+  - v19: https://github.com/odoo/odoo/tree/19.0/addons
 
 #### b) Odoo Enterprise
 - Local: `<YOUR_ENTERPRISE_SRC_PATH>/`

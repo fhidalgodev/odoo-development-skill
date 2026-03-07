@@ -1,15 +1,6 @@
 ---
 name: odoo-upgrade-analyzer
-description: Specialized agent for analyzing upgrade compatibility between Odoo versions
-tools:
-  - Read
-  - Glob
-  - Grep
-  - WebFetch
-  - WebSearch
-trigger:
-  description: Use this agent when analyzing Odoo modules for version upgrade compatibility and generating migration plans
-color: orange
+description: Specialized agent for analyzing Odoo module upgrade compatibility between versions and generating comprehensive migration plans.
 ---
 
 # Odoo Upgrade Analyzer Agent

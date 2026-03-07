@@ -83,5 +83,33 @@ When the user asks for a specific functionality, search the `skills/` directory.
 | test, unittest, integration | `skills/odoo-test-patterns.md` |
 | manifest, module, depends | `skills/odoo-module-generator.md` |
 | version, 14, 15, 16, 17, 18, 19 | `skills/odoo-version-knowledge.md` |
+| attachment, binary, file, image | `skills/attachment-binary-patterns.md` |
+| dashboard, kpi, analytics, graph | `skills/dashboard-kpi-patterns.md` |
+| exception, error, validation | `skills/error-handling-patterns.md` |
+| import, export, csv, excel | `skills/import-export-patterns.md` |
+| pricelist, price, discount | `skills/pricelist-pricing-patterns.md` |
+| performance, optimize, index | `skills/odoo-performance-guide.md` |
+| troubleshooting, debug, fix | `skills/odoo-troubleshooting-guide.md` |
+| quick, snippet, cheatsheet | `skills/quick-patterns.md` |
+| editions, community, enterprise | `skills/odoo-editions.md` |
+| end-to-end, example, full module | `skills/end-to-end-examples.md` |
+| template, scaffold, boilerplate | `skills/common-module-templates.md` |
+| module generation, example | `skills/module-generation-example.md` |
+| model, abstract, transient | `skills/odoo-model-patterns.md` |
+
+### Version-Specific Pattern Files
+
+Many patterns have **version-specific variants** following the naming convention `skills/{pattern}-{version}.md`. When generating code for a specific Odoo version, always check if a version-specific file exists:
+
+- **Single version:** `skills/{pattern}-{version}.md` (e.g., `skills/odoo-model-patterns-18.md`)
+- **Migration guide:** `skills/{pattern}-{sourceV}-{targetV}.md` (e.g., `skills/odoo-model-patterns-17-18.md`)
+- **All versions:** `skills/{pattern}-all.md` (e.g., `skills/odoo-model-patterns-all.md`)
+
+Available version-specific pattern families:
+- `odoo-version-knowledge-{14..19}.md` and migration guides `{14-15..18-19}.md`
+- `odoo-model-patterns-{14..19}.md` and migration guides
+- `odoo-module-generator-{14..19}.md` and migration guides
+- `odoo-owl-components-{15..19}.md` and migration guides
+- `odoo-security-guide-{14..19}.md` and migration guides
 
 **Rule:** Always read the corresponding pattern file using file reading tools before generating code. DO NOT guess the syntax if you are unsure.

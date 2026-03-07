@@ -1,27 +1,6 @@
 ---
 name: odoo-skill-finder
-description: |
-  MUST be used when odoo-context-gatherer needs to find specific pattern excerpts.
-  ALWAYS returns: FILE path + LINE range + max 50 lines of relevant code.
-
-  Use this agent for targeted pattern lookups when you need a specific code example
-  without loading entire skill files into context.
-
-  <example>
-  Context: Need specific computed field pattern
-  user: "How to create editable computed field"
-  assistant: [Invoke odoo-skill-finder to get precise excerpt]
-  <commentary>
-  Returns only the 20-50 lines needed, keeping context clean
-  </commentary>
-  </example>
-
-tools:
-  - Read
-  - Glob
-  - Grep
-model: inherit
-color: green
+description: Targeted pattern lookup agent. Returns FILE path + LINE range + max 50 lines of relevant code from the skills library. Use for precise code example lookups without loading entire files.
 ---
 
 # Odoo Skill Finder Agent

@@ -75,6 +75,31 @@ attributes, same semantics, just the modern name.
 non-inline-editable lists). `editable="false"` aborts module
 upgrade with a parse error — just leave the attribute off.
 
+### `account.payment.ref` renamed to `memo`
+
+The free-form text field on `account.payment` was renamed in
+v19. References to `payment.ref` raise `KeyError: ref` at
+runtime when the form opens or when code tries to read/write
+the field by its v18 name.
+
+```python
+# v18
+self.env['account.payment'].create({
+    'ref': 'Advance for SO/00042',  # broken on v19
+    ...
+})
+
+# v19
+self.env['account.payment'].create({
+    'memo': 'Advance for SO/00042',
+    ...
+})
+```
+
+XML views and search domains that reference `<field name="ref"/>`
+on the `account.payment` model also need to be updated to
+`memo` for v19.
+
 ### SQL Constraints Use models.Constraint() Class
 ```python
 # DEPRECATED in v19 - _sql_constraints list

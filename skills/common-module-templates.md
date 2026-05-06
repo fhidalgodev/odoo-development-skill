@@ -175,8 +175,14 @@ class SaleOrder(models.Model):
 ```
 
 ### Security
+
+> **VERSION-SENSITIVE PATTERN.** The `res.groups` schema changed in
+> Odoo 19. Use the matching block for the customer's version:
+
+#### Odoo 14 – 18
+
 ```xml
-<!-- security/sale_extension_security.xml -->
+<!-- security/sale_extension_security.xml — Odoo 14-18 -->
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="group_sale_user" model="res.groups">
@@ -188,6 +194,47 @@ class SaleOrder(models.Model):
     <record id="group_sale_manager" model="res.groups">
         <field name="name">Sale Extension Manager</field>
         <field name="category_id" ref="base.module_category_sales"/>
+        <field name="implied_ids" eval="[(4, ref('group_sale_user'))]"/>
+    </record>
+</odoo>
+```
+
+#### Odoo 19
+
+> **v19 BREAKING:** `category_id` was renamed to `privilege_id` on
+> `res.groups`, and the parent record's model changed from
+> `ir.module.category` to `res.groups.privilege`. Built-in
+> `base.module_category_*` xmlids are not valid privilege references
+> on v19; either declare a new `res.groups.privilege` record or
+> reference one of the built-in privileges (e.g.
+> `base.res_groups_privilege_user_types`). Using `category_id` on
+> v19 raises
+> `ParseError: Invalid field 'category_id' on res.groups`
+> at module install. See `odoo-security-guide-19.md` for the full
+> v19 pattern.
+
+```xml
+<!-- security/sale_extension_security.xml — Odoo 19 -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_groups_privilege_sale_extension"
+            model="res.groups.privilege">
+        <field name="name">Sale Extension</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="group_sale_user" model="res.groups">
+        <field name="name">Sale Extension User</field>
+        <field name="privilege_id"
+               ref="res_groups_privilege_sale_extension"/>
+        <field name="implied_ids"
+               eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    </record>
+
+    <record id="group_sale_manager" model="res.groups">
+        <field name="name">Sale Extension Manager</field>
+        <field name="privilege_id"
+               ref="res_groups_privilege_sale_extension"/>
         <field name="implied_ids" eval="[(4, ref('group_sale_user'))]"/>
     </record>
 </odoo>

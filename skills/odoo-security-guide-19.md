@@ -16,22 +16,32 @@
 
 ## Security Groups (v19 Syntax)
 
+> **v19 BREAKING:** `ir.module.category` was effectively replaced by
+> `res.groups.privilege` for grouping `res.groups`, and the field
+> on `res.groups` was renamed from `category_id` to `privilege_id`.
+> Using `category_id` raises
+> `ParseError: Invalid field 'category_id' on res.groups` at
+> module install in Odoo 19. Built-in `base.module_category_*`
+> xmlids are NOT valid privilege references on v19; either declare
+> a fresh `res.groups.privilege` record or reference one of the
+> built-in privileges (e.g. `base.res_groups_privilege_user_types`).
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="module_category_custom" model="ir.module.category">
+    <record id="res_groups_privilege_custom" model="res.groups.privilege">
         <field name="name">Custom Module</field>
         <field name="sequence">100</field>
     </record>
 
     <record id="group_custom_user" model="res.groups">
         <field name="name">User</field>
-        <field name="category_id" ref="module_category_custom"/>
+        <field name="privilege_id" ref="res_groups_privilege_custom"/>
     </record>
 
     <record id="group_custom_manager" model="res.groups">
         <field name="name">Manager</field>
-        <field name="category_id" ref="module_category_custom"/>
+        <field name="privilege_id" ref="res_groups_privilege_custom"/>
         <field name="implied_ids" eval="[(4, ref('group_custom_user'))]"/>
     </record>
 </odoo>

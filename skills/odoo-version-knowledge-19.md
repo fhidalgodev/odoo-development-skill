@@ -21,6 +21,37 @@
 
 ## BREAKING Changes from v18
 
+### `res.groups.category_id` renamed to `privilege_id`
+
+The model that backs the field also changed:
+`ir.module.category` → `res.groups.privilege`. Built-in
+`base.module_category_*` xmlids are NOT valid as `privilege_id`
+references on v19 — they belong to the old `ir.module.category`
+table. Either declare a fresh `res.groups.privilege` record in
+your security XML or reference one of the built-in privileges
+(e.g. `base.res_groups_privilege_user_types`).
+
+```xml
+<!-- v18 (BROKEN on v19 — ParseError: Invalid field 'category_id') -->
+<record id="group_my_user" model="res.groups">
+    <field name="name">My User</field>
+    <field name="category_id" ref="base.module_category_sales"/>
+</record>
+
+<!-- v19 CORRECT -->
+<record id="res_groups_privilege_my_module" model="res.groups.privilege">
+    <field name="name">My Module</field>
+    <field name="sequence">100</field>
+</record>
+<record id="group_my_user" model="res.groups">
+    <field name="name">My User</field>
+    <field name="privilege_id" ref="res_groups_privilege_my_module"/>
+</record>
+```
+
+Concrete failure this triggers: `ParseError: Invalid field
+'category_id' on model 'res.groups'` at module install.
+
 ### SQL Constraints Use models.Constraint() Class
 ```python
 # DEPRECATED in v19 - _sql_constraints list

@@ -267,12 +267,12 @@ class ImportWizardResult(models.TransientModel):
             </group>
             <group string="Results" invisible="not result_ids">
                 <field name="result_ids" nolabel="1">
-                    <tree>
+                    <list>
                         <field name="row_number"/>
                         <field name="status" decoration-success="status == 'success'"
                                decoration-danger="status == 'error'"/>
                         <field name="message"/>
-                    </tree>
+                    </list>
                 </field>
             </group>
             <footer>

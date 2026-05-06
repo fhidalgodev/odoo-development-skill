@@ -52,6 +52,29 @@ your security XML or reference one of the built-in privileges
 Concrete failure this triggers: `ParseError: Invalid field
 'category_id' on model 'res.groups'` at module install.
 
+### `<tree>` is the deprecated alias for `<list>` (since v17)
+
+`<tree>` still parses on v18 and v19 as a backward-compat alias,
+but pylint-odoo's `view-deprecated-list-element` check flags
+every occurrence on push. Use `<list>` everywhere — same
+attributes, same semantics, just the modern name.
+
+```xml
+<!-- DEPRECATED (warns on pylint-odoo, will fail in v20) -->
+<tree string="My List" editable="bottom">
+    <field name="name"/>
+</tree>
+
+<!-- CORRECT -->
+<list string="My List" editable="bottom">
+    <field name="name"/>
+</list>
+```
+
+`editable` only accepts `"top"` / `"bottom"` (or omit it for
+non-inline-editable lists). `editable="false"` aborts module
+upgrade with a parse error — just leave the attribute off.
+
 ### SQL Constraints Use models.Constraint() Class
 ```python
 # DEPRECATED in v19 - _sql_constraints list

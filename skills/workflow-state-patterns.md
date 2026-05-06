@@ -132,10 +132,10 @@ class MyDocument(models.Model):
         <notebook>
             <page string="Lines">
                 <field name="line_ids" readonly="state != 'draft'">
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <field name="product_id"/>
                         <field name="quantity"/>
-                    </tree>
+                    </list>
                 </field>
             </page>
         </notebook>

@@ -127,7 +127,7 @@
 
 ### Tree View Widgets
 ```xml
-<tree>
+<list>
     <!-- Handle for drag-drop reordering -->
     <field name="sequence" widget="handle"/>
 
@@ -140,7 +140,7 @@
     <field name="user_id" widget="many2one_avatar_user"/>
     <field name="tag_ids" widget="many2many_tags"/>
     <field name="is_favorite" widget="boolean_favorite" nolabel="1"/>
-</tree>
+</list>
 ```
 
 ### Kanban View Widgets
@@ -243,7 +243,7 @@
 
 ### Tree View Decorations
 ```xml
-<tree decoration-success="state == 'done'"
+<list decoration-success="state == 'done'"
       decoration-warning="state == 'pending'"
       decoration-danger="state == 'cancel'"
       decoration-info="state == 'draft'"
@@ -253,7 +253,7 @@
     <field name="state"/>
     <field name="active" column_invisible="True"/>
     <field name="is_important" column_invisible="True"/>
-</tree>
+</list>
 ```
 
 ### Available Decorations
@@ -358,10 +358,10 @@ color = fields.Integer(string='Color Index')
 sequence = fields.Integer(default=10)
 
 <!-- In tree view -->
-<tree>
+<list>
     <field name="sequence" widget="handle"/>
     <field name="name"/>
-</tree>
+</list>
 ```
 
 ---

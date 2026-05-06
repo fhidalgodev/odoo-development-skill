@@ -437,13 +437,13 @@ class ProjectTask(models.Model):
             </page>
             <page string="Checklist" name="checklist">
                 <field name="x_checklist_ids">
-                    <tree editable="bottom">
+                    <list editable="bottom">
                         <field name="sequence" widget="handle"/>
                         <field name="name"/>
                         <field name="is_done"/>
                         <field name="done_by" readonly="1"/>
                         <field name="done_date" readonly="1"/>
-                    </tree>
+                    </list>
                 </field>
                 <field name="x_checklist_progress" widget="progressbar"/>
             </page>

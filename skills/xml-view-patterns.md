@@ -13,7 +13,7 @@
 | View Type | Purpose | Element |
 |-----------|---------|---------|
 | Form | Single record editing | `<form>` |
-| Tree/List | Multiple records display | `<tree>` |
+| List | Multiple records display | `<list>` (since v17; `<tree>` is the deprecated alias) |
 | Kanban | Card-based view | `<kanban>` |
 | Search | Filtering/grouping | `<search>` |
 | Graph | Charts/analytics | `<graph>` |
@@ -99,13 +99,13 @@
                 <notebook>
                     <page string="Lines" name="lines">
                         <field name="line_ids">
-                            <tree editable="bottom">
+                            <list editable="bottom">
                                 <field name="sequence" widget="handle"/>
                                 <field name="name"/>
                                 <field name="quantity"/>
                                 <field name="price_unit"/>
                                 <field name="subtotal"/>
-                            </tree>
+                            </list>
                         </field>
                     </page>
                     <page string="Notes" name="notes">
@@ -200,20 +200,20 @@
     <field name="name">my.model.tree</field>
     <field name="model">my.model</field>
     <field name="arch" type="xml">
-        <tree string="My Models">
+        <list string="My Models">
             <field name="name"/>
             <field name="partner_id"/>
             <field name="date"/>
             <field name="state"/>
             <field name="amount" sum="Total"/>
-        </tree>
+        </list>
     </field>
 </record>
 ```
 
 ### Advanced Tree (v17+)
 ```xml
-<tree string="My Models"
+<list string="My Models"
       decoration-danger="state == 'cancel'"
       decoration-warning="state == 'draft'"
       decoration-success="state == 'done'"
@@ -229,17 +229,17 @@
     <field name="amount" sum="Total"/>
     <field name="company_id" column_invisible="True"/>
     <field name="internal_notes" optional="hide"/>
-</tree>
+</list>
 ```
 
 ### Editable Tree
 ```xml
-<tree editable="bottom">  <!-- or "top" -->
+<list editable="bottom">  <!-- or "top" -->
     <field name="product_id"/>
     <field name="quantity"/>
     <field name="price_unit"/>
     <field name="subtotal" readonly="1"/>
-</tree>
+</list>
 ```
 
 ### Column Visibility (v17+)

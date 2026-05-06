@@ -366,12 +366,12 @@ class EquipmentItem(models.Model):
                     <notebook>
                         <page string="Assignment History" name="assignments">
                             <field name="assignment_ids" readonly="1">
-                                <tree>
+                                <list>
                                     <field name="employee_id"/>
                                     <field name="date_assigned"/>
                                     <field name="date_returned"/>
                                     <field name="notes"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -390,7 +390,7 @@ class EquipmentItem(models.Model):
         <field name="name">equipment.item.tree</field>
         <field name="model">equipment.item</field>
         <field name="arch" type="xml">
-            <tree string="Equipment">
+            <list string="Equipment">
                 <field name="name"/>
                 <field name="serial_number"/>
                 <field name="category_id"/>
@@ -401,7 +401,7 @@ class EquipmentItem(models.Model):
                        decoration-warning="state == 'maintenance'"
                        decoration-danger="state == 'retired'"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 

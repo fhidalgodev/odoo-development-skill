@@ -266,10 +266,10 @@ class Task(models.Model):
 
         <!-- Domain with parent reference -->
         <field name="line_ids">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="product_id"
                        domain="[('categ_id', '=', parent.category_id)]"/>
-            </tree>
+            </list>
         </field>
     </group>
 </form>

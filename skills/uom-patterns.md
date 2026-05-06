@@ -350,12 +350,12 @@ class InventoryAdjustment(models.Model):
 
 ### List View
 ```xml
-<tree>
+<list>
     <field name="product_id"/>
     <field name="quantity"/>
     <field name="product_uom_id" groups="uom.group_uom"/>
     <field name="product_qty" string="Qty (Base)"/>
-</tree>
+</list>
 ```
 
 ---

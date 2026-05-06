@@ -447,13 +447,13 @@ class HrEmployee(models.Model):
                 <page string="Skills &amp; Certifications" name="skills">
                     <field name="x_skill_ids" widget="many2many_tags"/>
                     <field name="x_certification_ids">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="name"/>
                             <field name="issuing_org"/>
                             <field name="issue_date"/>
                             <field name="expiry_date"/>
                             <field name="is_expired"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>

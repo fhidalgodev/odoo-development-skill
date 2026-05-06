@@ -331,13 +331,16 @@ class {ModelName}(models.Model):
                     <notebook>
                         <page string="Lines" name="lines">
                             <field name="line_ids">
-                                <tree editable="bottom">
+                                <!-- v17+: <tree> is the deprecated alias
+                                     for <list>. pylint-odoo flags
+                                     view-deprecated-list-element on push. -->
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="quantity"/>
                                     <field name="price_unit"/>
                                     <field name="amount"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

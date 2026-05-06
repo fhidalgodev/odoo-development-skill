@@ -435,7 +435,7 @@ class EquipmentAsset(models.Model):
         <field name="name">equipment.asset.tree</field>
         <field name="model">equipment.asset</field>
         <field name="arch" type="xml">
-            <tree string="Equipment Assets"
+            <list string="Equipment Assets"
                   decoration-muted="status == 'retired'"
                   decoration-warning="status == 'maintenance'">
                 <field name="name"/>
@@ -447,7 +447,7 @@ class EquipmentAsset(models.Model):
                        decoration-danger="status == 'retired'"/>
                 <field name="value" sum="Total Value"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 

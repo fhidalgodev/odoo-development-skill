@@ -357,13 +357,13 @@ class {ModelName}Line(models.Model):
                     <notebook>
                         <page string="Lines" name="lines">
                             <field name="line_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="quantity"/>
                                     <field name="price_unit"/>
                                     <field name="amount"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -386,7 +386,7 @@ class {ModelName}Line(models.Model):
     <field name="name">{module_name}.{model_name}.tree</field>
     <field name="model">{module_name}.{model_name}</field>
     <field name="arch" type="xml">
-        <tree string="{Model Title}" multi_edit="1">
+        <list string="{Model Title}" multi_edit="1">
             <field name="name"/>
             <field name="partner_id"/>
             <field name="user_id" widget="many2one_avatar_user"/>
@@ -396,7 +396,7 @@ class {ModelName}Line(models.Model):
                    decoration-info="state == 'confirmed'"
                    decoration-warning="state == 'draft'"/>
             <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-        </tree>
+        </list>
     </field>
 </record>
 ```

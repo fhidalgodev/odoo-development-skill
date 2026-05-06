@@ -117,10 +117,10 @@ class MyModel(models.Model):
 
 ### Tree View - Image
 ```xml
-<tree>
+<list>
     <field name="image_128" widget="image" options="{'size': [32, 32]}"/>
     <field name="name"/>
-</tree>
+</list>
 ```
 
 ### Kanban View - Image

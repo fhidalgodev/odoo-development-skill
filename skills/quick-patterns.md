@@ -100,7 +100,7 @@ def unlink(self):
 
 ## Tree View
 ```xml
-<tree><field name="name"/><field name="partner_id"/><field name="amount"/><field name="state" widget="badge"/></tree>
+<list><field name="name"/><field name="partner_id"/><field name="amount"/><field name="state" widget="badge"/></list>
 ```
 
 ## Search View

@@ -19,7 +19,7 @@
 
 ## SQL Constraints
 
-### Odoo 19: models.Constraint() Class (REQUIRED)
+### Odoo 19+: models.Constraint() Class (REQUIRED, also in 20)
 ```python
 from odoo import models, fields
 
@@ -73,7 +73,7 @@ class MyModel(models.Model):
     )
 ```
 
-### Odoo 18 and Earlier: _sql_constraints List (DEPRECATED in v19)
+### Odoo 18 and Earlier: _sql_constraints List (ignored since v19)
 ```python
 from odoo import models, fields
 
@@ -118,7 +118,7 @@ class MyModel(models.Model):
     ]
 ```
 
-### Common SQL Constraint Patterns (Odoo 19 Syntax)
+### Common SQL Constraint Patterns (Odoo 19+ Syntax)
 
 #### Uniqueness
 ```python

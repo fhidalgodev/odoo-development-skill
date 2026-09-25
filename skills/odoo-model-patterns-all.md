@@ -6,7 +6,7 @@ This document covers ORM model concepts that are consistent across all Odoo vers
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  CRITICAL: Always use version-specific patterns!                             ║
 ║                                                                              ║
-║  Version-specific files: odoo-model-patterns-{14|15|16|17|18|19}.md          ║
+║  Version-specific files: odoo-model-patterns-{14|15|16|17|18|19|20}.md       ║
 ║  Migration guides: odoo-model-patterns-{from}-{to}.md                        ║
 ║                                                                              ║
 ║  Key differences between versions:                                           ║
@@ -14,8 +14,9 @@ This document covers ORM model concepts that are consistent across all Odoo vers
 ║  • v15: @api.multi removed, use multi-record methods                         ║
 ║  • v16: Command class introduced, attrs deprecated                           ║
 ║  • v17: @api.model_create_multi mandatory, attrs removed                     ║
-║  • v18: _check_company_auto, SQL() builder, type hints recommended          ║
-║  • v19: Type hints mandatory, SQL() mandatory                                ║
+║  • v18: check_access(), <list>, SQL() builder, type hints optional          ║
+║  • v19: models.Constraint, group_ids/user_ids, read_group deprecated         ║
+║  • v20: ir.access, BinaryValue, zoneinfo, read_group tuples, api.ormcache   ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -170,8 +171,7 @@ is_manager = fields.Boolean(compute='_compute_is_manager')
 
 @api.depends_context('uid')
 def _compute_is_manager(self):
-    manager_group = self.env.ref('module.group_manager')
-    is_mgr = manager_group in self.env.user.groups_id
+    is_mgr = self.env.user.has_group('module.group_manager')  # groups_id was renamed group_ids in v19
     for rec in self:
         rec.is_manager = is_mgr
 ```
@@ -191,10 +191,15 @@ def _check_dates(self):
 ### SQL Constraints
 
 ```python
+# v14-v18
 _sql_constraints = [
     ('name_uniq', 'unique(company_id, name)', 'Name must be unique!'),
     ('positive_amount', 'CHECK(amount >= 0)', 'Amount must be positive!'),
 ]
+
+# v19+ (_sql_constraints is ignored with a warning)
+_name_uniq = models.Constraint('unique(company_id, name)', 'Name must be unique!')
+_positive_amount = models.Constraint('CHECK(amount >= 0)', 'Amount must be positive!')
 ```
 
 ## Inheritance Types
@@ -318,6 +323,9 @@ domain = [
 
 ### Name Search
 
+v18+ removed `_name_search`: declare `_rec_names_search = ('name', 'code')` or override
+`_search_display_name(self, operator, value)`. Up to v17:
+
 ```python
 @api.model
 def _name_search(self, name='', domain=None, operator='ilike', limit=100, order=None):
@@ -354,7 +362,7 @@ def action_view_list(self):
         'type': 'ir.actions.act_window',
         'name': _('Records'),
         'res_model': 'my.model',
-        'view_mode': 'tree,form',
+        'view_mode': 'tree,form',  # v18+: 'list,form'
         'domain': [('partner_id', '=', self.partner_id.id)],
         'context': {'default_partner_id': self.partner_id.id},
     }
@@ -440,7 +448,7 @@ for partner in partners:
 ## Error Handling
 
 ```python
-from odoo.exceptions import (
+from odoo.exceptions import (  # v18+: prefer self.env._("...") over _("...") for messages
     UserError,       # User-facing error
     ValidationError, # Constraint violation
     AccessError,     # Permission denied

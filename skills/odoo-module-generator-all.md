@@ -79,7 +79,7 @@ The manifest file is required for every module:
     'security/custom_module_security.xml',
 
     # 2. Access rights (reference the groups defined above)
-    'security/ir.model.access.csv',
+    'security/ir.model.access.csv',  # v20: 'security/ir.access.csv'
 
     # 3. Data files (sequences, configuration)
     'data/custom_module_data.xml',
@@ -192,7 +192,8 @@ _inherit = ['portal.mixin']
 | Type | Purpose |
 |------|---------|
 | form | Single record editing |
-| tree | List of records |
+| tree / list | List of records (`<list>` since v18) |
+| card | Reusable kanban card (v20) |
 | kanban | Card-based view |
 | search | Filters and grouping |
 | calendar | Date-based view |
@@ -202,10 +203,10 @@ _inherit = ['portal.mixin']
 
 ## Security Layers
 
-1. **Access Rights** (ir.model.access.csv)
+1. **Access Rights** (ir.model.access.csv; v20: `security/ir.access.csv`)
    - Model-level CRUD permissions
 
-2. **Record Rules** (ir.rule)
+2. **Record Rules** (ir.rule; v20: `ir.access` rows with a domain)
    - Row-level filtering
 
 3. **Field Groups**

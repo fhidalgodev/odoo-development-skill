@@ -535,13 +535,27 @@ class MyModel(models.Model):
 
 ### v19+
 ```python
-# Type hints required
+# SQL constraints and indexes as model attributes (type hints stay optional)
 class MyModel(models.Model):
     _name = 'my.model'
 
-    name: str = fields.Char(required=True)
-    active: bool = fields.Boolean(default=True)
-    amount: float = fields.Monetary(currency_field='currency_id')
+    _code_uniq = models.Constraint('UNIQUE(code)', "Code must be unique.")
+    _date_idx = models.Index('(date DESC, id DESC)')
+
+    code = fields.Char(required=True)
+    date = fields.Date()
+```
+
+### v20+
+```python
+# Binary values are BinaryValue objects; new field capabilities
+from odoo.tools import BinaryBytes
+
+document = fields.Binary(attachment=True)        # record.document = BinaryBytes(data, filename='a.pdf')
+kind = fields.Selection([('a', "A"), ('b', "B")], compute='_compute_kind',
+                        compute_sql='_compute_sql_kind', compute_sudo=True)   # searchable non-stored compute
+barcode = fields.Char(init_storage='_init_barcode')   # fill the new column for existing rows
+reference = fields.Char(copy=lambda rec: rec.reference and f"{rec.reference}-COPY")
 ```
 
 ---

@@ -25,8 +25,9 @@
 | Odoo 15.0 | `odoo-security-guide-15.md` | Legacy |
 | Odoo 16.0 | `odoo-security-guide-16.md` | Supported |
 | Odoo 17.0 | `odoo-security-guide-17.md` | Supported |
-| Odoo 18.0 | `odoo-security-guide-18.md` | Current |
-| Odoo 19.0 | `odoo-security-guide-19.md` | Development |
+| Odoo 18.0 | `odoo-security-guide-18.md` | Supported |
+| Odoo 19.0 | `odoo-security-guide-19.md` | Supported |
+| Odoo 20.0 | `odoo-security-guide-20.md` | Current (`ir.access`) |
 | All versions | `odoo-security-guide-all.md` | Core concepts |
 
 ## Migration Guides
@@ -40,6 +41,7 @@ When upgrading modules between versions, use the migration guides:
 | 16.0 → 17.0 | `odoo-security-guide-16-17.md` |
 | 17.0 → 18.0 | `odoo-security-guide-17-18.md` |
 | 18.0 → 19.0 | `odoo-security-guide-18-19.md` |
+| 19.0 → 20.0 | `odoo-security-guide-19-20.md` |
 
 ## How to Use This Skill
 
@@ -83,6 +85,8 @@ If the version is not explicitly stated, look for these clues:
 | `_check_company_auto` | 18.0+ |
 | Type hints on fields | 18.0+ |
 | `SQL()` builder | 18.0+ |
+| `res.groups.privilege`, `group_ids` / `user_ids` | 19.0+ |
+| `security/ir.access.csv` (`ir.access`), no `ir.rule` | 20.0+ |
 
 ## Quick Reference: Major Security Changes by Version
 
@@ -103,8 +107,15 @@ If the version is not explicitly stated, look for these clues:
 - Enhanced field-level security
 
 ### v18 → v19
-- Stricter type checking
-- Enhanced audit capabilities
+- `res.users.groups_id` → `group_ids`, `res.groups.users` → `user_ids`
+- Group categories replaced by `res.groups.privilege` (`privilege_id`)
+
+### v19 → v20
+- **`ir.model.access` and `ir.rule` removed**: single `ir.access` model (`security/ir.access.csv`,
+  permissions with group OR-ed, restrictions without group AND-ed)
+- `base.group_everyone`, `base.group_user_regular` (light vs regular users)
+- `check_access_rights` / `check_access_rule` / `_filter_access_rules` removed
+- `auth='bearer'` routes require `bearer_scope`
 
 ---
 

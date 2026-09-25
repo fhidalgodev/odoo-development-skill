@@ -602,5 +602,6 @@ Use `button_install()` which queues the installation to happen after the registr
 | 14→15 | `@api.multi` removed, update method signatures |
 | 15→16 | OWL 2.x, `Command` class for x2many |
 | 16→17 | `attrs` removed, use inline expressions |
-| 17→18 | `_check_company_auto`, `SQL()` builder |
-| 18→19 | Type hints required, `SQL()` mandatory |
+| 17→18 | `<tree>` → `<list>`, `check_access()`, `SQL()` builder |
+| 18→19 | `models.Constraint`, `group_ids`/`user_ids`, `read_group` deprecated |
+| 19→20 | `ir.access` (ACL + rules), OWL 3, `t-out` only, `raw`/`BinaryBytes`, `zoneinfo`; run `odoo-bin upgrade_code --from 19.0` |

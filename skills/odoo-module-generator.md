@@ -25,8 +25,9 @@
 | Odoo 15.0 | `odoo-module-generator-15.md` | Legacy |
 | Odoo 16.0 | `odoo-module-generator-16.md` | Supported |
 | Odoo 17.0 | `odoo-module-generator-17.md` | Supported |
-| Odoo 18.0 | `odoo-module-generator-18.md` | Current |
-| Odoo 19.0 | `odoo-module-generator-19.md` | Development |
+| Odoo 18.0 | `odoo-module-generator-18.md` | Supported |
+| Odoo 19.0 | `odoo-module-generator-19.md` | Supported |
+| Odoo 20.0 | `odoo-module-generator-20.md` | Current |
 | All versions | `odoo-module-generator-all.md` | Core concepts |
 
 ## Migration Guides
@@ -40,6 +41,7 @@ When upgrading modules between versions:
 | 16.0 → 17.0 | `odoo-module-generator-16-17.md` |
 | 17.0 → 18.0 | `odoo-module-generator-17-18.md` |
 | 18.0 → 19.0 | `odoo-module-generator-18-19.md` |
+| 19.0 → 20.0 | `odoo-module-generator-19-20.md` |
 
 ## How to Use This Skill
 
@@ -49,7 +51,7 @@ When upgrading modules between versions:
 QUESTION: What Odoo version are you generating a module for?
 
 If the user doesn't specify, ASK before proceeding:
-"What Odoo version should I target? (14.0, 15.0, 16.0, 17.0, 18.0, 19.0)"
+"What Odoo version should I target? (14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0)"
 ```
 
 ### Step 2: Load the Correct File
@@ -102,7 +104,8 @@ If the version is not explicitly stated, look for these clues in existing code:
 | `_check_company_auto` | 18.0+ |
 | Type hints on fields | 18.0+ |
 | `SQL()` builder | 18.0+ |
-| Full type annotations | 19.0+ |
+| `models.Constraint` attributes | 19.0+ |
+| `security/ir.access.csv`, `useProps` (OWL 3), `data-icon` icons | 20.0+ |
 
 ## Quick Reference: Major Changes by Version
 
@@ -134,13 +137,20 @@ If the version is not explicitly stated, look for these clues in existing code:
 - `check_company=True` on fields
 - Type hints recommended
 - `SQL()` builder recommended
-- `allowed_company_ids` in rules
+- `company_ids` in record rule domains (`allowed_company_ids` is a context key, not a rule variable)
 
 ### v19 Key Patterns
-- Type hints mandatory
-- `SQL()` builder mandatory
-- OWL 3.x
-- Python 3.12+
+- `models.Constraint` / `models.Index` instead of `_sql_constraints`
+- `group_ids` / `user_ids` / `res.groups.privilege`
+- OWL 2.x (2.8), Python 3.10+
+- `SQL()` builder recommended, type hints encouraged
+
+### v20 Key Patterns
+- `security/ir.access.csv` (`ir.access`) replaces ACL CSV + `ir.rule`
+- OWL 3 (`useProps`, `proxy`, signals, `this.` in templates)
+- Server QWeb `t-out` only, `t-call` attributes, no `report_file`
+- `BinaryBytes`, `zoneinfo`, Material Symbols icons
+- Python 3.12+, PostgreSQL 16+
 
 ## Structured Output Format
 
@@ -189,7 +199,8 @@ Before generating modules, agents SHOULD verify patterns against:
 | 16.0 | `16.0` |
 | 17.0 | `17.0` |
 | 18.0 | `18.0` |
-| 19.0 | `master` |
+| 19.0 | `19.0` |
+| 20.0 | `20.0` |
 
 ## Example Module Generation Requests
 
@@ -292,7 +303,7 @@ Upgrade our custom CRM module from Odoo 16.0 to 17.0
 1. Parse structured input
 2. Load v18 patterns
 3. Generate complete module skeleton with:
-   - Multi-company record rules using `allowed_company_ids`
+   - Multi-company record rules using `company_ids`
    - `_check_company_auto = True` on models
    - Advanced security groups
    - Type hints on methods
@@ -318,7 +329,7 @@ For programmatic module generation, use this JSON schema:
     },
     "odoo_version": {
       "type": "string",
-      "enum": ["14.0", "15.0", "16.0", "17.0", "18.0", "19.0"]
+      "enum": ["14.0", "15.0", "16.0", "17.0", "18.0", "19.0", "20.0"]
     },
     "target_apps": {
       "type": "array",

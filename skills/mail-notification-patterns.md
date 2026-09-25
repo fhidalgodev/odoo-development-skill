@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** `_track_subtype(init_values)` is now `_track_log_get_default_subtype(track_init_values)` and
+> `_track_template(changes)` is `_track_template_parameters(tracked_fields)`: old overrides are silently
+> never called. Mail template bodies follow the server QWeb rules (`t-out`, no `t-esc`). Attachments use
+> `raw`, not `datas`. See `odoo-version-knowledge-20.md` §10.
+
 ## Mail Mixin Integration
 
 ### Adding Chatter to Model

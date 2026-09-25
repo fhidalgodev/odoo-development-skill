@@ -1,6 +1,11 @@
 # Odoo Security Guide - Core Concepts (All Versions)
 
-This document covers security concepts that are consistent across all Odoo versions (14-19+). For version-specific implementation details, see the version-specific files.
+This document covers security concepts that are consistent across all Odoo versions (14-20). For version-specific implementation details, see the version-specific files.
+
+> **Odoo 20:** layers 3 and 4 below (access rights and record rules) are unified in a single model,
+> `ir.access` (`security/ir.access.csv`): rows with a group are OR-ed *permissions* (optionally limited by a
+> domain), rows without a group are AND-ed *restrictions*. `ir.model.access` and `ir.rule` no longer exist.
+> See `odoo-security-guide-20.md`.
 
 ## Security Architecture Overview
 
@@ -265,8 +270,8 @@ self.env['res.partner'].search([('name', '=', user_input)])
 <!-- ✗ DANGEROUS: Using t-raw with user input -->
 <t t-raw="record.user_input"/>
 
-<!-- ✓ SAFE: Using t-esc (default escaping) -->
-<t t-esc="record.user_input"/>
+<!-- ✓ SAFE: Using t-out (escapes unless the value is Markup; t-esc is removed server-side in v20) -->
+<t t-out="record.user_input"/>
 ```
 
 ### Insecure Direct Object Reference (IDOR)
@@ -280,8 +285,7 @@ return record.sensitive_data
 
 # ✓ SAFE: Access check performed
 record = self.env['my.model'].browse(user_provided_id)
-record.check_access_rights('read')
-record.check_access_rule('read')
+record.check_access('read')            # v18+ (v14-v17: check_access_rights + check_access_rule)
 return record.sensitive_data
 ```
 

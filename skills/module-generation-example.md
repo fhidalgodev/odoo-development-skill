@@ -100,7 +100,8 @@ This module provides comprehensive equipment asset tracking with:
 
 **Upgrade Notes:**
 - From v17: No breaking changes
-- To v19: Add mandatory type hints
+- To v19: `models.Constraint`, `group_ids`/`user_ids` (see odoo-*-18-19.md)
+- To v20: `security/ir.access.csv`, OWL 3, `t-out` only (see odoo-*-19-20.md)
     """,
     'author': 'My Company',
     'website': 'https://mycompany.com',

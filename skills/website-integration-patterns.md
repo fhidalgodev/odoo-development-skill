@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 19+:** frontend behaviour is written as `Interaction` classes (`@web/public/interaction`,
+> registry `public.interactions`). **Odoo 20:** `publicWidget`, `web/static/src/legacy` and jQuery are
+> removed, website templates follow the server QWeb rules (`t-out`, `t-call` attributes) and icons use
+> `<i class="oi" data-icon="..."/>`. See `odoo-owl-components-20.md` (Interactions).
+
 ## Module Structure
 
 ```

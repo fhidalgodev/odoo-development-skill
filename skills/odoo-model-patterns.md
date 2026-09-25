@@ -25,8 +25,9 @@
 | Odoo 15.0 | `odoo-model-patterns-15.md` | Legacy |
 | Odoo 16.0 | `odoo-model-patterns-16.md` | Supported |
 | Odoo 17.0 | `odoo-model-patterns-17.md` | Supported |
-| Odoo 18.0 | `odoo-model-patterns-18.md` | Current |
-| Odoo 19.0 | `odoo-model-patterns-19.md` | Development |
+| Odoo 18.0 | `odoo-model-patterns-18.md` | Supported |
+| Odoo 19.0 | `odoo-model-patterns-19.md` | Supported |
+| Odoo 20.0 | `odoo-model-patterns-20.md` | Current |
 | All versions | `odoo-model-patterns-all.md` | Core concepts |
 
 ## Migration Guides
@@ -38,6 +39,7 @@
 | 16.0 → 17.0 | `odoo-model-patterns-16-17.md` |
 | 17.0 → 18.0 | `odoo-model-patterns-17-18.md` |
 | 18.0 → 19.0 | `odoo-model-patterns-18-19.md` |
+| 19.0 → 20.0 | `odoo-model-patterns-19-20.md` |
 
 ## Quick Reference: Major Model Pattern Changes
 
@@ -66,8 +68,16 @@
 - `SQL()` builder recommended
 
 ### v19 Patterns
-- Type hints mandatory
-- `SQL()` builder mandatory
+- `models.Constraint` / `models.Index` (`_sql_constraints` ignored)
+- `res.users.group_ids`, `res.groups.user_ids`, `res.groups.privilege`
+- `SQL()` builder recommended, type hints encouraged (not enforced)
+
+### v20 Patterns
+- `read_group` new tuple contract; `_read_group` in backend code
+- Deprecated v18/v19 aliases removed (`check_access_rights`, `toggle_active`, `_check_recursion`...)
+- `BinaryValue`/`BinaryBytes`, `ir.attachment.raw` (no `datas`)
+- `zoneinfo` instead of `pytz`; `@api.ormcache`; `env.transaction.invalidate_ormcache()`
+- Mail tracking hooks renamed (`_track_log_get_default_subtype`)
 
 ## Version Detection in Existing Code
 
@@ -80,7 +90,8 @@
 | `Command` class | 16.0+ |
 | `_check_company_auto` | 18.0+ |
 | Type hints on fields | 18.0+ |
-| Full type annotations | 19.0+ |
+| `models.Constraint` attributes | 19.0+ |
+| `BinaryBytes`, `zoneinfo`, `@api.ormcache` | 20.0+ |
 
 ---
 

@@ -1,17 +1,17 @@
 ---
 name: odoo-development-skill
-description: Universal Odoo development skill based on strict OCA standards, covering versions 14-19. Includes agents for code review, upgrade analysis, and pattern discovery.
+description: Universal Odoo development skill based on strict OCA standards, covering versions 14-20. Includes agents for code review, upgrade analysis, and pattern discovery.
 ---
 
 # Odoo Development Skill (Universal)
 
-You are a Senior Odoo Architect expert in Python and JavaScript, following strict development standards. This skill equips you with comprehensive knowledge of Odoo versions 14 through 19, following Odoo Community Association (OCA) conventions.
+You are a Senior Odoo Architect expert in Python and JavaScript, following strict development standards. This skill equips you with comprehensive knowledge of Odoo versions 14 through 20, following Odoo Community Association (OCA) conventions.
 
 ## ⚠️ CRITICAL WORKFLOW - EXECUTE IN ORDER
 
 ### 1. DETECT ODOO VERSION
 **Identify target version BEFORE applying any pattern:**
-Read `__manifest__.py` in the current directory and extract the version (`X.0.Y.Z`). The first number represents the Odoo version (14, 15, 16, 17, 18, 19).
+Read `__manifest__.py` in the current directory and extract the version (`X.0.Y.Z`). The first number represents the Odoo version (14, 15, 16, 17, 18, 19, 20).
 
 ### 2. DON'T REINVENT THE WHEEL ⚡
 
@@ -27,6 +27,8 @@ Search locally first, then verify against the official GitHub:
   - v17: https://github.com/odoo/odoo/tree/17.0/addons
   - v18: https://github.com/odoo/odoo/tree/18.0/addons
   - v19: https://github.com/odoo/odoo/tree/19.0/addons
+  - v20: https://github.com/odoo/odoo/tree/20.0/addons
+- Odoo 20 also ships official agent skills in the source tree (`<odoo_src>/skills/`: `odoo-guidelines`, `odoo-web-guidelines`, `odoo-security`, `odoo-review`); for v20 work, read the matching section as house rules.
 
 #### b) Odoo Enterprise
 - Local: `<YOUR_ENTERPRISE_SRC_PATH>/`
@@ -58,9 +60,13 @@ Perform an **exhaustive search** across OCA repositories at https://github.com/O
 ### 3. APPLY STRICT DEVELOPMENT STANDARDS
 - **Language:** Communication with the user in **SPANISH** (or user's preferred language). Code, variables, and docstrings in **ENGLISH**. `README.rst` and `index.html` in the user's preferred language.
 - **Python:** PEP8, SOLID, DRY, KISS. No `# -*- coding: utf-8 -*-`. Use `super()`.
-- **JavaScript/OWL:** Modern ES6+, correct OWL version (v15: 1.x, v16-18: 2.x, v19: 3.x).
+- **JavaScript/OWL:** Modern ES6+, correct OWL version (v15: 1.x, v16-19: 2.x, v20: 3.x).
 - **XML/Views:** Version-specific visibility (`attrs` vs `invisible=...`). Always verify XML IDs before inheriting. Never replace.
-- **Security:** Always create `ir.model.access.csv` for new models.
+- **Security:** Always declare access for new models: `ir.model.access.csv` (+ `ir.rule`) in v14-19, `security/ir.access.csv` (`ir.access`) in v20.
+
+#### Odoo 20 override rule
+Most generic files in `skills/` predate Odoo 20. When the target is 20.0, read `skills/odoo-version-knowledge-20.md` first and translate any generic snippet before using it:
+`ir.model.access.csv`/`ir.rule` → `security/ir.access.csv` · `t-esc`/`t-raw` → `t-out` · `t-set` inside `t-call` → `t-call` attributes · `ir.attachment.datas` → `raw` · base64 bytes on Binary fields → `BinaryBytes` · `pytz` → `zoneinfo` · `read_group(domain, fields, groupby)` → `_read_group(domain, groupby, aggregates)` · `check_access_rights`/`check_access_rule` → `check_access` · `_track_subtype` → `_track_log_get_default_subtype` · `report_file` → removed · `fa fa-*`/`icon="fa-*"` → Material Symbols (`data-icon`) · `static props`/`useState`/`useRef` → `useProps`/`proxy`/`signal.ref()` · `publicWidget`/jQuery → `Interaction` · `from odoo.http import content_disposition` → `from odoo.http.stream import content_disposition`.
 
 ### 4. AVAILABLE AGENTS (WORKFLOWS)
 When requested, execute the following specialized workflows:
@@ -116,7 +122,7 @@ When the user asks for a specific functionality, search the `skills/` directory.
 | owl, component, frontend | `skills/odoo-owl-components.md` |
 | test, unittest, integration | `skills/odoo-test-patterns.md` |
 | manifest, module, depends | `skills/odoo-module-generator.md` |
-| version, 14, 15, 16, 17, 18, 19 | `skills/odoo-version-knowledge.md` |
+| version, 14, 15, 16, 17, 18, 19, 20 | `skills/odoo-version-knowledge.md` |
 | attachment, binary, file, image | `skills/attachment-binary-patterns.md` |
 | dashboard, kpi, analytics, graph | `skills/dashboard-kpi-patterns.md` |
 | exception, error, validation | `skills/error-handling-patterns.md` |
@@ -140,10 +146,10 @@ Many patterns have **version-specific variants** following the naming convention
 - **All versions:** `skills/{pattern}-all.md` (e.g., `skills/odoo-model-patterns-all.md`)
 
 Available version-specific pattern families:
-- `odoo-version-knowledge-{14..19}.md` and migration guides `{14-15..18-19}.md`
-- `odoo-model-patterns-{14..19}.md` and migration guides
-- `odoo-module-generator-{14..19}.md` and migration guides
-- `odoo-owl-components-{15..19}.md` and migration guides
-- `odoo-security-guide-{14..19}.md` and migration guides
+- `odoo-version-knowledge-{14..20}.md` and migration guides `{14-15..19-20}.md`
+- `odoo-model-patterns-{14..20}.md` and migration guides
+- `odoo-module-generator-{14..20}.md` and migration guides
+- `odoo-owl-components-{15..20}.md` and migration guides
+- `odoo-security-guide-{14..20}.md` and migration guides
 
 **Rule:** Always read the corresponding pattern file using file reading tools before generating code. DO NOT guess the syntax if you are unsure.

@@ -168,14 +168,26 @@ Review each component category:
 ### Odoo 18
 - Check `_check_company_auto`
 - Check `check_company` on fields
-- Recommend type hints
+- Type hints optional
 - Recommend SQL builder
-- Verify `allowed_company_ids` in rules
+- Verify rule domains use `company_ids` (`allowed_company_ids` is not a rule variable)
 
 ### Odoo 19
-- Error if no type hints
-- Error if raw SQL without SQL builder
-- Check OWL 3.x patterns
+- Error on `_sql_constraints` (ignored): use `models.Constraint` / `models.Index`
+- Error on `groups_id` / `users` (renamed `group_ids` / `user_ids`)
+- Warn on `read_group`, `toggle_active`, `check_access_rights` (deprecated)
+- Check OWL 2.x patterns (Odoo 19 ships Owl 2.8)
+
+### Odoo 20
+- Error on `ir.model.access.csv` or `ir.rule` records: use `security/ir.access.csv`
+- Error on `t-esc` / `t-raw` in server templates, `t-set` used to pass values into `t-call`
+- Error on `ir.attachment` `datas`, raw `bytes` written to Binary fields, `report_file`
+- Error on removed APIs (`check_access_rights`, `check_access_rule`, `_filter_access_rules`, `toggle_active`,
+  `_check_recursion`, `registry.clear_cache`, `odoo.osv`, `ormcache_context`), old `read_group` calls
+- Error on `from odoo.http import content_disposition|Stream|...` and `auth='bearer'` without `bearer_scope`
+- Error on OWL 2 syntax (`static props`, `useState`, `useRef`, missing `this.` in templates)
+- Warn on `pytz`, FontAwesome icons, `_track_subtype`/`_track_template` overrides
+- Apply the official `<odoo_src>/skills/odoo-review` process (house rules + merits pass)
 
 ## GitHub Verification
 
@@ -190,15 +202,17 @@ When uncertain about patterns, verify against official Odoo repository using Web
 | 16.0 | `https://github.com/odoo/odoo/tree/16.0` |
 | 17.0 | `https://github.com/odoo/odoo/tree/17.0` |
 | 18.0 | `https://github.com/odoo/odoo/tree/18.0` |
-| 19.0 | `https://github.com/odoo/odoo/tree/master` |
+| 19.0 | `https://github.com/odoo/odoo/tree/19.0` |
+| 20.0 | `https://github.com/odoo/odoo/tree/20.0` |
 
 ### Key Reference Files
 
 | Component | Raw URL Pattern |
 |-----------|-----------------|
-| Model patterns | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/models.py` |
-| Field definitions | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/fields.py` |
-| API decorators | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/api.py` |
+| Model patterns | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/models.py` (v19+: `odoo/orm/models.py`) |
+| Field definitions | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/fields.py` (v19+: `odoo/orm/fields*.py`) |
+| API decorators | `https://raw.githubusercontent.com/odoo/odoo/{version}/odoo/api.py` (v19+: `odoo/orm/decorators.py`) |
+| House rules (v20) | `https://github.com/odoo/odoo/tree/20.0/skills` |
 | Sale order (example) | `https://raw.githubusercontent.com/odoo/odoo/{version}/addons/sale/models/sale_order.py` |
 | OWL hooks | `https://raw.githubusercontent.com/odoo/odoo/{version}/addons/web/static/src/core/utils/hooks.js` |
 | View XML (example) | `https://raw.githubusercontent.com/odoo/odoo/{version}/addons/sale/views/sale_order_views.xml` |

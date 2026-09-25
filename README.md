@@ -1,16 +1,17 @@
 # Odoo Development Universal Skill
 
-A universal Odoo development skill for AI agents compatible with `skills.sh`. It provides fast code indexing, intelligent patterns, and strict adherence to Odoo Community Association (OCA) standards for versions 14 to 19.
+A universal Odoo development skill for AI agents compatible with `skills.sh`. It provides fast code indexing, intelligent patterns, and strict adherence to Odoo Community Association (OCA) standards for versions 14 to 20.
 
 This repository is a fork and adaptation of the Odoo plugin from [letzdoo/claude-marketplace](https://github.com/letzdoo/claude-marketplace), restructured to be 100% agnostic and compatible with any IDE that supports `skills.sh` (like Windsurf, Cursor, Cline, etc.).
 
 ## 🌟 Features
 
-- **Version Awareness**: Covers Odoo 14 to 19, including breaking changes and deprecated methods.
+- **Version Awareness**: Covers Odoo 14 to 20, including breaking changes and deprecated methods.
 - **OCA Standards Strict Adherence**: Enforces PEP8, DRY, KISS, and SOLID principles.
-- **OWL Compatibility**: Knowledge of OWL 1.x (v15), 2.x (v16-18), and 3.x (v19).
+- **OWL Compatibility**: Knowledge of OWL 1.x (v15), 2.x (v16-19), and 3.x (v20).
+- **Odoo 20 Ready**: `ir.access` security, OWL 3, `BinaryValue`, `zoneinfo`, Material Symbols icons and the 19→20 migration path (`odoo-bin upgrade_code`).
 - **Specialized Agents**: Includes 4 workflows (agents) for Context Gathering, Code Review, Upgrade Analysis, and Skill Discovery.
-- **123 Skill Patterns**: Detailed copy-paste ready code snippets for every functional domain in Odoo.
+- **124 Skill Patterns**: Detailed copy-paste ready code snippets for every functional domain in Odoo.
 
 ## 📦 Installation
 
@@ -37,7 +38,7 @@ odoo-development-skill/
 │   ├── odoo-code-reviewer.md
 │   ├── odoo-upgrade-analyzer.md
 │   └── odoo-skill-finder.md
-└── skills/                  # 123 pattern files
+└── skills/                  # 124 pattern files
     ├── odoo-version-knowledge.md
     ├── field-type-reference.md
     ├── xml-view-patterns.md

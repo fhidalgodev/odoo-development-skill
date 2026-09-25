@@ -44,7 +44,7 @@ Analyze the task description to identify ALL required domains. Map keywords to s
 | constraint, validation, check, _sql_constraints | Constraints | `constraint-patterns.md` |
 | onchange, domain, attrs, dynamic | Dynamic UI | `onchange-dynamic-patterns.md` |
 | view, form, tree, kanban, search, list | Views | `xml-view-patterns.md` |
-| security, access, rule, group, ir.model.access | Security | `odoo-security-guide.md` |
+| security, access, rule, group, ir.model.access, ir.access | Security | `odoo-security-guide.md` |
 | OWL, component, JavaScript, widget | Frontend | `odoo-owl-components.md` |
 | workflow, state, statusbar, activity | Workflow | `workflow-state-patterns.md` |
 | report, QWeb, PDF, print | Reports | `report-patterns.md` |
@@ -70,6 +70,8 @@ For EACH identified domain:
 - General pattern: `skills/{pattern}.md`
 - Version-specific: `skills/{pattern}-{version}.md` (if exists)
 - Always check `skills/odoo-version-knowledge.md` for breaking changes
+- Target 20.0: most generic files predate v20; translate their snippets with the "Odoo 20 override rule"
+  of `SKILL.md` and `skills/odoo-version-knowledge-20.md` before including them
 
 ### Step 4: Compile Context Output (MANDATORY)
 
@@ -151,16 +153,24 @@ Return a structured context document in this EXACT format:
 ### Odoo 18
 - `_check_company_auto = True`
 - `check_company=True` on fields
-- Type hints recommended
+- Type hints optional
 - `SQL()` builder recommended
-- `allowed_company_ids` in record rules
+- `company_ids` in record rule domains
+- `<list>` views, `<chatter/>`, `check_access()`
 
 ### Odoo 19
-- Full type annotations REQUIRED
-- `SQL()` builder REQUIRED (no raw SQL)
-- SQL constraints use `models.Constraint()` class
-- `groups_id` cannot be set in `res.users.create()`
-- OWL 3.x patterns
+- SQL constraints use `models.Constraint()` / `models.Index()` (`_sql_constraints` ignored)
+- `res.users.group_ids`, `res.groups.user_ids`, `res.groups.privilege` (renamed from `groups_id` / `users`)
+- `read_group` deprecated (`_read_group`, `formatted_read_group`)
+- OWL 2.x (2.8); type hints optional; `SQL()` recommended
+
+### Odoo 20
+- `security/ir.access.csv` (`ir.access`) replaces `ir.model.access.csv` + `ir.rule`
+- OWL 3: `props = useProps({...})` with `t` types, `proxy`/`signal`, `this.` in templates, `t-out`
+- Server QWeb: `t-out` only, `t-call` parameters as attributes; no `report_file`
+- `BinaryBytes` / `ir.attachment.raw` (no `datas`); `zoneinfo` (no `pytz`)
+- `read_group` new tuple contract; deprecated v18/v19 ORM aliases removed
+- Material Symbols icons (`data-icon`), jQuery/`publicWidget` removed (use `Interaction`)
 
 ## EXAMPLE EXECUTION
 

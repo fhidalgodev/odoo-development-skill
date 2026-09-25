@@ -24,8 +24,9 @@
 | 15.0 | Legacy | 3.8+ | October 2024 |
 | 16.0 | Supported | 3.8+ | October 2025 |
 | 17.0 | Supported | 3.10+ | October 2026 |
-| 18.0 | Current | 3.11+ | October 2027 |
-| 19.0 | Development | 3.12+ | TBD |
+| 18.0 | Supported | 3.10+ | October 2027 |
+| 19.0 | Supported | 3.10+ | October 2028 (expected) |
+| 20.0 | Current | 3.12+ (max 3.14), PostgreSQL 16+ | October 2029 (expected) |
 
 ## Version-Specific Knowledge Files
 
@@ -37,6 +38,8 @@
 | Odoo 17.0 | `odoo-version-knowledge-17.md` |
 | Odoo 18.0 | `odoo-version-knowledge-18.md` |
 | Odoo 19.0 | `odoo-version-knowledge-19.md` |
+| Odoo 20.0 | `odoo-version-knowledge-20.md` |
+| 19.0 → 20.0 migration | `odoo-version-knowledge-19-20.md` |
 
 ## Breaking Changes Summary
 
@@ -66,19 +69,36 @@
 ### v17 → v18
 | Component | Change | Impact |
 |-----------|--------|--------|
-| `_check_company_auto` | Introduced | Auto company validation |
-| `check_company` | On fields | Field-level validation |
+| `_check_company_auto` | Recommended (available since 13.0) | Auto company validation |
+| `check_company` | On fields (available since 13.0) | Field-level validation |
 | Type hints | Recommended | Better IDE support |
 | `SQL()` builder | Recommended | Safer SQL queries |
-| `allowed_company_ids` | In rules | New variable name |
+| `<tree>` → `<list>`, `<chatter/>` | Views | Rename in archs and `view_mode` |
+| `check_access()` | Replaces `check_access_rights`/`check_access_rule` (deprecated) | Update calls |
+
+> Record rule domains use `company_ids` / `company_id` in every version; `allowed_company_ids` is a
+> context key and is **not** defined in the rule evaluation context.
 
 ### v18 → v19
 | Component | Change | Impact |
 |-----------|--------|--------|
-| Type hints | Mandatory | Must annotate all |
-| `SQL()` builder | Mandatory | Required for raw SQL |
-| OWL | 3.x | Component changes |
-| Python | 3.12+ | Version requirement |
+| Type hints | Encouraged (not enforced) | Optional |
+| `SQL()` builder | Recommended (raw SQL still accepted) | Recommended |
+| SQL constraints | `models.Constraint` / `models.Index` (`_sql_constraints` ignored) | Must migrate |
+| Users/groups | `groups_id` → `group_ids`, `users` → `user_ids`, `res.groups.privilege` | Must migrate |
+| OWL | Still 2.x (2.8) | No framework change |
+
+### v19 → v20
+| Component | Change | Impact |
+|-----------|--------|--------|
+| Security | `ir.model.access` + `ir.rule` → `ir.access` (`security/ir.access.csv`) | **BREAKING** |
+| OWL | 3.x (`useProps`, `proxy`, signals, `this.` in templates) | **BREAKING** |
+| Server QWeb | `t-esc`/`t-raw` removed, `t-call` parameters as attributes | **BREAKING** (silent) |
+| Binary / attachments | `BinaryValue`, `ir.attachment.datas` removed | **BREAKING** |
+| ORM | `read_group` new signature, deprecated aliases removed | **BREAKING** |
+| Time zones | `pytz` → `zoneinfo` | Must migrate |
+| Icons | FontAwesome → Material Symbols | Must migrate |
+| Python / PostgreSQL | 3.12+ / 16+ | Version requirement |
 
 ## GitHub Branch Reference
 
@@ -89,7 +109,8 @@
 | 16.0 | `16.0` | `github.com/odoo/odoo/tree/16.0` |
 | 17.0 | `17.0` | `github.com/odoo/odoo/tree/17.0` |
 | 18.0 | `18.0` | `github.com/odoo/odoo/tree/18.0` |
-| 19.0 | `master` | `github.com/odoo/odoo/tree/master` |
+| 19.0 | `19.0` | `github.com/odoo/odoo/tree/19.0` |
+| 20.0 | `20.0` | `github.com/odoo/odoo/tree/20.0` |
 
 ## Version Detection Patterns
 
@@ -118,7 +139,14 @@ check_company=True  # v18+
 name: str = fields.Char()  # Type hints, v18+
 
 # v19 indicators
-from __future__ import annotations  # Full typing
+_name_uniq = models.Constraint('UNIQUE(name)', "...")  # models.Constraint (19.0+)
+'group_ids': [Command.link(group.id)]  # res.users.group_ids (renamed in 19.0)
+
+# v20 indicators
+'security/ir.access.csv'  # in manifest 'data'
+from odoo.tools import BinaryBytes
+from zoneinfo import ZoneInfo
+from odoo.http.stream import content_disposition
 ```
 
 ### XML/View Indicators
@@ -144,9 +172,20 @@ odoo.define('x', function(require) {
     const { Component } = owl;
 });
 
-// v16+: OWL 2.x
+// v16-v19: OWL 2.x
 /** @odoo-module **/
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
+static props = { ... };
+
+// v20: OWL 3
+import { Component, proxy, signal, t, useProps } from "@odoo/owl";
+props = useProps({ record: t.object() });
+```
+
+```xml
+<!-- v20: server QWeb / icons -->
+<t t-call="module.tmpl" title.f="Order {{ doc.name }}"/>
+<i class="oi" data-icon="check" title="Done"/>
 ```
 
 ## Deprecation Warnings
@@ -158,7 +197,11 @@ When you see these in logs, the code needs updating:
 | `@api.multi is deprecated` | v14 | Remove decorator |
 | `track_visibility is deprecated` | v15 | Use `tracking=True` |
 | `attrs is deprecated` | v16 | Use direct attributes |
-| `company_ids will be renamed` | v17 | Use `allowed_company_ids` |
+| `Model attribute '_sql_constraints' is no longer supported` | v19+ | Use `models.Constraint` |
+| `Since 20.0, use type=bytes instead of type=base64` | v20 | `type="bytes"` in XML data |
+| `Since 20.0 import ormcache from odoo.api` | v20 | `@api.ormcache` |
+| `Use raw, datas has beeen removed` | v20 | `ir.attachment` `raw` field |
+| `@route(type='json') is a deprecated alias` | v19+ | `type='jsonrpc'` |
 
 ## AI Agent Version Workflow
 
@@ -182,18 +225,21 @@ If answer is unclear, look for:
 
 ## Version Compatibility Matrix
 
-| Feature | v14 | v15 | v16 | v17 | v18 | v19 |
-|---------|-----|-----|-----|-----|-----|-----|
-| `@api.multi` | ⚠️ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `tracking` | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `Command` class | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `attrs` in views | ✅ | ✅ | ⚠️ | ❌ | ❌ | ❌ |
-| Direct invisible | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `_check_company_auto` | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| Type hints on fields | ❌ | ❌ | ❌ | ❌ | ⚠️ | ✅ |
-| `SQL()` builder | ❌ | ❌ | ❌ | ❌ | ⚠️ | ✅ |
-| OWL 2.x | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
-| OWL 3.x | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Feature | v14 | v15 | v16 | v17 | v18 | v19 | v20 |
+|---------|-----|-----|-----|-----|-----|-----|-----|
+| `@api.multi` | ⚠️ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `tracking` | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `Command` class | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `attrs` in views | ✅ | ✅ | ⚠️ | ❌ | ❌ | ❌ | ❌ |
+| Direct invisible | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `_check_company_auto` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Type hints on fields | ❌ | ❌ | ❌ | ❌ | ⚠️ | ⚠️ | ⚠️ |
+| `SQL()` builder | ❌ | ❌ | ❌ | ❌ | ⚠️ | ✅ | ✅ |
+| `ir.model.access` / `ir.rule` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `ir.access` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Server QWeb `t-esc` | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ |
+| OWL 2.x | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| OWL 3.x | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 Legend: ✅ Supported | ⚠️ Deprecated/Optional | ❌ Not available/Removed
 

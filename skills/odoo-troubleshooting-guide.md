@@ -16,9 +16,14 @@
 | `attrs attribute is no longer supported` | Using attrs= | v17+ | Use invisible= |
 | `create() takes 2 positional arguments` | Single create() | v17+ | Use @api.model_create_multi |
 | `check_company failed` | Cross-company relation | v18+ | Add check_company=True |
-| `SQL string query deprecated` | String SQL | v19 | Use SQL() builder |
+| `Model attribute '_sql_constraints' is no longer supported` | Old SQL constraints | v19+ | Use `models.Constraint` |
+| `Invalid field 'groups_id' ... 'res.users'` | Renamed field | v19+ | Use `group_ids` (`res.groups.user_ids`) |
+| `KeyError: 'ir.model.access'` | ACL CSV in manifest | v20 | Use `security/ir.access.csv` |
+| `cannot import name '...' from 'odoo.http'` | Helper moved to submodule | v20 | `odoo.http.stream` / `.session` / `.router` |
+| `use BinaryValue instead of bytes` | Raw bytes on Binary field | v20 | `BinaryBytes(data)` |
+| `defines a static "props" or "defaultProps"` | OWL 2 component | v20 | `props = useProps({...})` |
 | `External ID not found` | Missing XML reference | All | Check file order in manifest |
-| `Access Denied` | Missing security rules | All | Add ir.model.access.csv |
+| `Access Denied` | Missing security rules | All | Add ir.model.access.csv (v20: `ir.access.csv`) |
 | `KeyError: 'field_name'` | Field not in vals | All | Use .get() or check field |
 | `RecursionError` | Circular compute | All | Check @api.depends |
 | `MissingError` | Deleted record access | All | Check record.exists() |
@@ -145,44 +150,94 @@ class MyModel(models.Model):
 
 ### v19 Errors
 
-#### Error: `DeprecationWarning: SQL string queries are deprecated`
+#### Warning: `Model attribute '_sql_constraints' is no longer supported, please define models.Constraint on the model.`
 
-**Cause**: Using string SQL instead of SQL() builder
+**Cause**: `_sql_constraints` is ignored since 19.0 (the constraint is never created)
 
-**Wrong (v14-v18)**:
+**Correct (v19+)**:
 ```python
-self.env.cr.execute("""
-    SELECT id FROM my_model WHERE state = %s
-""", ('draft',))
+_code_company_uniq = models.Constraint('UNIQUE(code, company_id)', "Code must be unique per company.")
 ```
 
-**Correct (v19)**:
-```python
-from odoo.tools import SQL
+`SQL()` is recommended for raw SQL (safer composition), but plain `cr.execute("... %s", params)` is still
+accepted; type hints are optional.
 
-self.env.cr.execute(SQL(
-    "SELECT id FROM my_model WHERE state = %s",
-    'draft'
-))
+---
+
+#### Error: `ValueError: Invalid field 'groups_id' in 'res.users'`
+
+**Cause**: 19.0 renamed `res.users.groups_id` → `group_ids` and `res.groups.users` → `user_ids`
+
+```python
+user = self.env['res.users'].create({
+    'name': 'Portal User',
+    'login': 'portal@example.com',
+    'group_ids': [Command.set([self.env.ref('base.group_portal').id])],
+})
 ```
 
 ---
 
-#### Error: Type hint related warnings
+### v20 Errors
 
-**Cause**: Missing type hints (recommended in v18, required in v19)
+#### Error: `KeyError: 'ir.model.access'` while installing a module
 
-**Add type hints**:
-```python
-def action_confirm(self) -> bool:
-    for record in self:
-        record.state = 'confirmed'
-    return True
+**Cause**: `ir.model.access` and `ir.rule` were replaced by `ir.access`
 
-@api.model_create_multi
-def create(self, vals_list: list[dict]) -> 'MyModel':
-    return super().create(vals_list)
+**Fix**: convert with `./odoo-bin upgrade_code --script 19.4-00-ir-access --addons-path=...` or by hand:
+```csv
+id,name,model_id,group_id/id,operation,domain
+access_my_model_user,my.model user,my.model,base.group_user,crud,
+my_model_rule_company,my.model multi-company,my.model,,crud,"[('company_id', 'in', company_ids)]"
 ```
+
+---
+
+#### Blank values in PDF reports, emails or website pages
+
+**Cause**: server QWeb no longer compiles `t-esc` / `t-raw`, and `t-set` children of `t-call` are not passed
+
+**Fix**: `t-out` (or `t-field`), and values as `t-call` attributes:
+```xml
+<span t-out="doc.name"/>
+<t t-call="my_module.header" partner="doc.partner_id" title.translate="Invoice"/>
+```
+
+---
+
+#### Empty attachments / `TypeError: ... use BinaryValue instead of bytes`
+
+**Cause**: `ir.attachment.datas` removed (ignored with a warning); Binary fields hold `BinaryValue`
+
+```python
+from odoo.tools import BinaryBytes
+
+self.env['ir.attachment'].create({'name': 'doc.pdf', 'raw': pdf_bytes, 'res_model': self._name, 'res_id': self.id})
+record.document = BinaryBytes(pdf_bytes, filename='doc.pdf')
+```
+
+---
+
+#### `AttributeError: 'zoneinfo.ZoneInfo' object has no attribute 'localize'`
+
+**Cause**: `pytz` API used on `env.tz` (now a `zoneinfo.ZoneInfo`)
+
+```python
+local_dt = naive_utc_dt.replace(tzinfo=UTC).astimezone(self.env.tz)
+```
+
+---
+
+#### `ImportError: cannot import name 'content_disposition' from 'odoo.http'`
+
+**Fix**: `from odoo.http.stream import content_disposition, Stream`;
+`from odoo.http.session import SessionExpiredException`; `from odoo.http.router import root`.
+
+---
+
+#### `ValueError: Invalid field 'report_file' in 'ir.actions.report'`
+
+**Fix**: remove `<field name="report_file">` from report actions.
 
 ---
 
@@ -531,7 +586,7 @@ import { registry } from "@web/core/registry";
 registry.category("actions").add("my_action", MyComponent);
 ```
 
-### v19 OWL 3.x Errors
+### v16-v19 OWL 2.x Errors (hooks)
 
 #### Error: `Invalid hook call`
 
@@ -540,7 +595,7 @@ registry.category("actions").add("my_action", MyComponent);
 **Wrong**:
 ```javascript
 class MyComponent extends Component {
-    myState = useState({ value: 0 });  // Wrong place
+    myState = useState({ value: 0 });  // Wrong place in OWL 2
 }
 ```
 
@@ -552,6 +607,30 @@ class MyComponent extends Component {
     }
 }
 ```
+
+### v20 OWL 3 Errors
+
+#### Error: `Component "MyComponent" defines a static "props" or "defaultProps", which Owl 3 ignores...`
+
+**Fix**: declare props with `useProps` (class field) and `t` types:
+```javascript
+import { Component, proxy, t, useProps } from "@odoo/owl";
+
+class MyComponent extends Component {
+    static template = "my_module.MyComponent";
+    props = useProps({ recordId: t.number().optional() });
+    state = proxy({ value: 0 });
+}
+```
+
+#### Error: `TypeError: useState is not a function` (also `useRef`, `useExternalListener`)
+
+**Fix**: `useState`/`reactive` → `proxy`, `useRef` → `signal.ref()` + `t-ref="this.ref"`,
+`useExternalListener` → `useListener`.
+
+#### Template shows nothing / `undefined`
+
+**Fix**: prefix component members with `this.` in OWL 3 templates (`t-out="this.state.value"`).
 
 ---
 
@@ -678,4 +757,7 @@ print(f"Queries: {qc.count}")
 | v17+ attrs error | Use inline expressions |
 | v17+ create error | Use @api.model_create_multi |
 | v18+ company error | Add check_company=True |
-| v19 SQL warning | Use SQL() builder |
+| v19 `_sql_constraints` warning | Use `models.Constraint` |
+| v20 install fails on security | `security/ir.access.csv` |
+| v20 blank template values | `t-out` instead of `t-esc` |
+| v20 OWL component crash | `useProps`, `proxy`, `this.` in templates |

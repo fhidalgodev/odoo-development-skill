@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** `ir.actions.report` has no `report_file` field anymore (install error: remove it); `t-esc` /
+> `t-raw` render nothing in report templates (use `t-out` / `t-field`); pass values to `web.external_layout`
+> and sub-templates as `t-call` attributes. The PDF engine is pluggable (`base_report_wkhtmltox`,
+> `base_report_paper_muncher`). See `odoo-version-knowledge-20.md` §7 and §9.
+
 ## Report Types
 
 | Type | Use Case | Technology |

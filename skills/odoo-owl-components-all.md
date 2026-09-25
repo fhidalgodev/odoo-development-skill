@@ -6,8 +6,8 @@ This document covers OWL component concepts that are consistent across all Odoo 
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  OWL VERSION MAPPING                                                         ║
 ║  • Odoo 15.0: OWL 1.x                                                        ║
-║  • Odoo 16.0-18.0: OWL 2.x                                                   ║
-║  • Odoo 19.0+: OWL 3.x                                                       ║
+║  • Odoo 16.0-19.0: OWL 2.x (19.0 ships Owl 2.8)                              ║
+║  • Odoo 20.0+: OWL 3.x (useProps, proxy, signals, this. in templates)        ║
 ║  ALWAYS use the correct OWL version patterns for your target Odoo version!  ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
@@ -127,18 +127,21 @@ Low-level server communication:
 |-----------|---------|
 | `t-if` / `t-elif` / `t-else` | Conditional rendering |
 | `t-foreach` / `t-as` / `t-key` | Iteration |
-| `t-esc` | Text output (escaped) |
-| `t-out` | Raw HTML output |
+| `t-esc` | Escaped output (deprecated alias of `t-out`; not compiled by server QWeb in v20) |
+| `t-out` | Escaped output, raw only for `Markup`/`markup()` values |
 | `t-att-*` | Dynamic attribute |
 | `t-attf-*` | Formatted attribute |
 | `t-on-*` | Event handlers |
 | `t-ref` | Element reference |
-| `t-slot` | Slot definition |
+| `t-slot` | Render a slot (v20: `t-call-slot`) |
 | `t-set-slot` | Slot content |
 | `t-component` | Dynamic component |
 | `t-props` | Props spreading |
 
 ### Event Handling
+
+In Odoo 20 (OWL 3) component members are referenced with `this.` in templates
+(`t-on-click="this.onButtonClick"`, `t-if="this.state.open"`); the examples below use the OWL 2 form.
 
 ```xml
 <!-- Click event -->
@@ -183,7 +186,7 @@ Odoo uses registries to organize components:
 ## State Management
 
 ### Local State
-Component-specific reactive state:
+Component-specific reactive state (`useState` in OWL 1-2, `proxy`/`signal` in OWL 3):
 - Use for UI-only state
 - Triggers re-render on change
 - Not shared between components
@@ -199,6 +202,8 @@ Shared application state:
 - Global accessibility
 - Business logic encapsulation
 - Singleton pattern
+- v20: Owl 3 `Plugin` classes registered with `services.add(...)`, consumed with `usePlugin(...)`
+  (legacy `registry.category("services")` services and `useService` still work)
 
 ## Common Patterns
 
@@ -298,6 +303,11 @@ module_name/
 - End-to-end user flows
 - Automated UI testing
 - Regression testing
+
+### Test Frameworks by Version
+- v14-v17: QUnit
+- v18-v19: Hoot (QUnit leftovers)
+- v20: Hoot only (`@odoo/hoot`, bundle `web.assets_unit_tests`)
 
 ---
 

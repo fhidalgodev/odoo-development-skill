@@ -12,8 +12,8 @@
 ║                                                                              ║
 ║   - Odoo 14: No OWL (legacy JavaScript)                                      ║
 ║   - Odoo 15: OWL 1.x                                                         ║
-║   - Odoo 16-18: OWL 2.x                                                      ║
-║   - Odoo 19+: OWL 3.x                                                        ║
+║   - Odoo 16-19: OWL 2.x (Odoo 19 ships Owl 2.8)                              ║
+║   - Odoo 20+: OWL 3.x                                                        ║
 ║                                                                              ║
 ║   BEFORE writing ANY OWL component, identify your Odoo version               ║
 ║   and load the corresponding file. This is NOT optional.                     ║
@@ -30,7 +30,8 @@
 | Odoo 16.0 | OWL 2.x | `odoo-owl-components-16.md` |
 | Odoo 17.0 | OWL 2.x | `odoo-owl-components-17.md` |
 | Odoo 18.0 | OWL 2.x | `odoo-owl-components-18.md` |
-| Odoo 19.0 | OWL 3.x | `odoo-owl-components-19.md` |
+| Odoo 19.0 | OWL 2.x (2.8) | `odoo-owl-components-19.md` |
+| Odoo 20.0 | OWL 3.x | `odoo-owl-components-20.md` |
 | All versions | Concepts | `odoo-owl-components-all.md` |
 
 ## Migration Guides
@@ -41,7 +42,8 @@
 | 15.0 → 16.0 | `odoo-owl-components-15-16.md` (OWL 1.x to 2.x) |
 | 16.0 → 17.0 | `odoo-owl-components-16-17.md` (OWL 2.x refinements) |
 | 17.0 → 18.0 | `odoo-owl-components-17-18.md` (OWL 2.x refinements) |
-| 18.0 → 19.0 | `odoo-owl-components-18-19.md` (OWL 2.x to 3.x) |
+| 18.0 → 19.0 | `odoo-owl-components-18-19.md` (OWL 2.x refinements) |
+| 19.0 → 20.0 | `odoo-owl-components-19-20.md` (OWL 2.x to 3.x) |
 
 ## Quick Reference: OWL Changes by Version
 
@@ -76,7 +78,7 @@ odoo.define('module.Component', function (require) {
 });
 ```
 
-### Odoo 16-18 (OWL 2.x)
+### Odoo 16-19 (OWL 2.x)
 ```javascript
 /** @odoo-module **/
 import { Component, useState } from "@odoo/owl";
@@ -84,6 +86,7 @@ import { registry } from "@web/core/registry";
 
 export class MyComponent extends Component {
     static template = "module.MyComponent";
+    static props = { recordId: { type: Number, optional: true } };
     setup() {
         this.state = useState({ count: 0 });
     }
@@ -91,21 +94,17 @@ export class MyComponent extends Component {
 registry.category("actions").add("my_action", MyComponent);
 ```
 
-### Odoo 19+ (OWL 3.x)
+### Odoo 20+ (OWL 3.x)
 ```javascript
-/** @odoo-module **/
-import { Component, useState } from "@odoo/owl";
+import { Component, proxy, t, useProps } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 
 export class MyComponent extends Component {
-    static template = "module.MyComponent";
-    static props = {
-        // Explicit prop types required
-    };
-    setup() {
-        this.state = useState({ count: 0 });
-    }
+    static template = "module.MyComponent";   // template uses this.state.count, t-out
+    props = useProps({ recordId: t.number().optional() });   // static props throw in 20.0
+    state = proxy({ count: 0 });
 }
+registry.category("actions").add("my_action", MyComponent);
 ```
 
 ## Key Differences
@@ -116,7 +115,10 @@ export class MyComponent extends Component {
 | Import syntax | `require()` | `import` | `import` |
 | Hooks | `owl.hooks` | Direct import | Direct import |
 | Template | Property | Static property | Static property |
-| Props | Implicit | Optional | Required |
+| Props | Implicit | `static props` | `props = useProps({...})` with `t` types |
+| State | `useState` | `useState` | `proxy`, `signal`, `computed` |
+| Refs | `useRef` | `useRef` + `ref.el` | `signal.ref()` + `this.ref()` |
+| Template scope | Component | Component | Explicit `this.` |
 
 ## OWL Detection in Existing Code
 
@@ -125,9 +127,11 @@ export class MyComponent extends Component {
 | `odoo.define()` | 14 (legacy) or 15 (OWL 1.x) |
 | `require('web.Widget')` | 14 (legacy) |
 | `const { Component } = owl` | 15 (OWL 1.x) |
-| `/** @odoo-module **/` | 16+ (OWL 2.x+) |
+| `/** @odoo-module **/` | 16+ (OWL 2.x+), optional for `static/src` files since 18 |
 | `import { Component }` | 16+ (OWL 2.x+) |
-| `static props = {}` required | 19+ (OWL 3.x) |
+| `static props = {...}` | 16-19 (OWL 2.x) |
+| `props = useProps(...)`, `proxy(...)`, `signal(...)` | 20+ (OWL 3.x) |
+| `import ... from "@web/owl2/utils"` | 20+ (compat layer) |
 
 ## Common OWL Patterns
 
@@ -143,8 +147,9 @@ export class MyComponent extends Component {
 - `action` - Navigation
 - `notification` - User notifications
 - `dialog` - Modal dialogs
-- `user` - Current user info
+- `user` - Current user info (`import { user } from "@web/core/user"` since 18)
 - `company` - Current company
+- v20: many services are also Owl 3 plugins (`usePlugin(ORM)`, `usePlugin(NotificationPlugin)`)
 
 ---
 

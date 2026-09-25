@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** FontAwesome is no longer loaded: `fa fa-*` classes and `icon="fa-*"` render nothing, use
+> Material Symbols (`<i class="oi" data-icon="check" title="..."/>`, `icon="menu"`). New `card` view type
+> (`<kanban card_id="%(xmlid)d">`), list `<column>` groups, calendar `<popover>`; widgets `remaining_days` →
+> `relative_date`, `selection_badge` → `badges_selection`/`badges_many2one`. See `odoo-version-knowledge-20.md` §8.
+
 ## View Types Overview
 
 | View Type | Purpose | Element |

@@ -47,6 +47,8 @@ SECTION: Inverse Methods
 - ALWAYS include file path and line numbers
 - If multiple skills are relevant, return file paths only and let main agent decide
 - Focus on CODE EXAMPLES, not explanations
+- If the target is Odoo 20 and the excerpt comes from a generic (non-versioned) file, prefer the matching
+  `*-20.md` file, or flag the lines that the "Odoo 20 override rule" of `SKILL.md` changes
 
 ## Example
 

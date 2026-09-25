@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** jQuery (`web._assets_jquery`), QUnit (`web.qunit_suite_tests`) and the FontAwesome CSS are
+> gone; icons come from `web.icons_fonts` (Material Symbols + `odoo_ui_icons`, `<i class="oi" data-icon="..."/>`).
+> Components use OWL 3 (`useProps`, `proxy`) and JS tests use Hoot in `web.assets_unit_tests`. See
+> `odoo-owl-components-20.md`.
+
 ## Asset Bundles Overview
 
 ### Main Bundles

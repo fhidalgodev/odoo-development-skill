@@ -8,6 +8,10 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** `ir.attachment.datas` no longer exists and is **silently ignored** on create/write (empty
+> attachment): use `raw` (bytes). Binary fields hold `BinaryValue` objects; write `BinaryBytes(data)` or a
+> base64 *str*, never raw `bytes`. XML data files use `type="bytes"`. See `odoo-version-knowledge-20.md` §4.
+
 ## Binary Field Types
 
 | Field Type | Use Case |

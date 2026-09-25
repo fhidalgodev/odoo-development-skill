@@ -8,6 +8,11 @@
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
+> **Odoo 20:** server-side QWeb (reports, mail, website) no longer compiles `t-esc` / `t-raw`: they render
+> **nothing**. Use `t-out` (escaped unless `Markup`). Values for a called template go on the `t-call` node
+> (`<t t-call="x" partner="doc.partner_id" title.f="Order {{ doc.name }}" label.translate="Total"/>`);
+> `t-set` children of a `t-call` are no longer passed to the callee. OWL templates: see `odoo-owl-components-20.md`.
+
 ## QWeb Directives Overview
 
 | Directive | Purpose |
